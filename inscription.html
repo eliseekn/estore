@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+    <head>
+        <meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <title>Boutique en ligne</title>
+
+        <meta name="author" content="eliseekn">
+        <meta name="description" content="">
+        <meta name="keywords" content="">
+
+        <link rel="stylesheet" href="vendor/bootstrap-4.4.1-dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="vendor/fontawesome-5.11.2/css/all.min.css">
+        <link rel="stylesheet" href="assets/css/style.css">
+
+        <style type="text/css">
+            nav li {
+                font-size: 1.3rem;
+                padding-right: .3em;
+            }
+
+            h4 {
+                font-weight: bold;
+            }
+
+            hr {
+                width: 100px;
+                border-width: 5px;
+                margin: 0;
+                border-radius: 50px;
+            }
+
+            .title {
+                font-weight: bold;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+            <div class="container">
+                <a class="navbar-brand" href="#">Boutique en ligne</a>
+            </div>
+        </nav>
+
+        <div class="container card shadow p-5 d-flex flex-column my-5" style="width:40%">
+            <h4 class="mb-4">Création de compte</h4>
+
+            <form>
+                <div class="form-group">
+                    <label>Nom et prénoms</label>
+                    <input type="text" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label>Mot de passe</label>
+                    <input type="password" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label>Numéro de téléphone</label>
+                    <input type="text" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label>Adresse email</label>
+                    <input type="email" class="form-control">
+                </div>
+
+                <div class="form-group">
+                    <label>Quartier</label>
+                    <select name="street" class="form-control">
+                        <option selected>Choisissez votre quartier</option>
+                        <option value="Tazibouo 1">Tazibouo 1</option>
+                        <option value="Tazibouo 2">Tazibouo 2</option>
+                        <option value="Tazibouo Plateau">Tazibouo Plateau</option>
+                        <option value="Lobia Goudron">Lobia Goudron</option>
+                        <option value="Lobia Piscine">Lobia Piscine</option>
+                        <option value="Commerce">Commerce</option>
+                        <option value="Labia">Labia</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn btn-dark mt-3">
+                    <li class="fas fa-sign-in-alt"></li> Créer mon compte
+                </button>
+            </form>
+        </div>
+
+        <script type="text/javascript" src="vendor/jquery-3.4.1.min.js"></script>
+        <script type="text/javascript" src="vendor/popper.min.js"></script>
+        <script type="text/javascript" src="vendor/bootstrap-4.4.1-dist/js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="assets/js/script.js"></script>
+    </body>
+</html>
