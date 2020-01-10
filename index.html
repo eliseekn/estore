@@ -5,7 +5,7 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=Edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-        <title>Boutique en ligne</title>
+        <title>eStore</title>
 
         <meta name="author" content="eliseekn">
 
@@ -33,18 +33,22 @@
             li input[type=number] {
                 width: 60px;
             }
+
+            .cart-item-price {
+                font-weight: bold !important;
+            }
         </style>
     </head>
     <body>
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
             <div class="container">
-                <a class="navbar-brand" href="#">Boutique en ligne</a>
+                <a class="navbar-brand" href="#">eStore</a>
 
                 <ul class="navbar-nav ml-auto">
                     <div class="dropdown">
                         <a href="" class="nav-link dropdown-toggle" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <li class="fas fa-user"></li>
-                            <span data-user-email="test@gmail.com" id="user">test</span>
+                            <span data-user-phone="00000000" id="user">test</span>
                         </a>
 
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
@@ -57,7 +61,7 @@
 
                     <a href="" class="nav-link" id="cart-button" data-toggle="modal" data-target="#exampleModalCenter">
                         <li class="fas fa-shopping-cart"></li>
-                        <span>Panier (<span class="cart-items-count">0</span>)</span>
+                        <span>Panier (<span class="cart-products-count"></span>)</span>
                     </a>
                 </ul>
             </div>
@@ -66,66 +70,27 @@
         <section class="container my-5">
             <div class="row">
                 <div class="col-lg-3">
+                    <h4 class="mt-5 text-dark">Rechercher</h4>
+                    <hr class="bg-dark mb-4">
+
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Nom du produit" id="search">
+                    </div>
+
                     <h4 class="mt-5 text-dark">Catégories</h4>
                     <hr class="bg-dark mb-4">
                     <div class="card">
-                        <ul class="list-group list-group-flush">
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <a href="" class="text-dark">Lait et produits laitiers</a>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <a href="" class="text-dark">Produits ménagers</a>
-                            </li>
-                            <li class="list-group-item d-flex justify-content-between align-items-center">
-                                <a href="" class="text-dark">Boissons</a>
-                            </li>
-                        </ul>
+                        <ul class="list-group list-group-flush" id="categories-list"></ul>
                     </div>
-
-                    <h4 class="mt-5 text-dark">Rechercher</h4>
-                    <hr class="bg-dark mb-4">
-                    <form>
-                        <div class="form-group">
-                            <label for="formGroupExampleInput" class="title">Nom du produit</label>
-                            <input type="text" class="form-control" id="formGroupExampleInput" placeholder="ex: lait en poudre">
-                        </div>
-
-                        <div class="form-group mt-4">
-                            <label for="formGroupExampleInput" class="title">Rechercher dans</label>
-
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-                                <label class="form-check-label" for="defaultCheck1">
-                                    Lait et produits laitiers
-                                </label>
-                            </div>
-
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="defaultCheck2">
-                                <label class="form-check-label" for="defaultCheck2">
-                                    Produits ménagers
-                                </label>
-                            </div>
-
-                            <div class="form-check">
-                                <input class="form-check-input" type="checkbox" value="" id="defaultCheck1">
-                                <label class="form-check-label" for="defaultCheck1">
-                                    Boissons
-                                </label>
-                            </div>
-                        </div>
-
-                        <button type="button" class="btn btn-dark mt-3">Rechercher</button>
-                    </form>
                 </div>
 
                 <div class="col-lg-9">
-                    <h4 class="mt-5 text-dark">Tous les produits</h4>
+                    <h4 class="mt-5 text-dark" id="products-list-title">Tous les produits</h4>
                     <hr class="bg-dark mb-4">
 
-                    <div class="card-columns"></div>
+                    <div class="card-columns" id="products-list"></div>
 
-                    <nav class="mb-5">
+                    <nav class="my-5">
                         <ul class="pagination">
                             <a class="page-link text-dark" href="#" aria-label="Previous">
                                 <li class="fas fa-angle-double-left"></li>
@@ -144,23 +109,23 @@
             </div>
         </section>
 
-        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header bg-dark text-white px-3">
-                        <h5 class="modal-title" id="exampleModalCenterTitle">Votre panier (<span class="cart-items-count">3</span>)</h5>
+                        <h5 class="modal-title">Votre panier (<span class="cart-products-count"></span>)</h5>
                         <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                             <li class="fas fa-times"></li>
                         </button>
                     </div>
 
                     <div class="modal-body">
-                        <ul class="list-group list-group-flush" id="cart-items-list"></ul>
+                        <ul class="list-group list-group-flush" id="cart-products-list"></ul>
                     </div>
 
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-outline-dark disabled">Coût total: <span id="cart-items-price">33,600</span> FCFA</button>
-                        <button type="button" class="btn btn-danger" id="clear-cart-button">Tout retirer</button>
+                        <button type="button" class="btn btn-outline-dark disabled">Coût total: <span id="cart-price"></span> FCFA</button>
+                        <button type="button" class="btn btn-danger" id="clear-cart">Tout retirer</button>
                         <button type="button" class="btn btn-success">Passer la commande</button>
                     </div>
                 </div>
@@ -170,6 +135,6 @@
         <script type="text/javascript" src="vendor/jquery-3.4.1.min.js"></script>
         <script type="text/javascript" src="vendor/popper.min.js"></script>
         <script type="text/javascript" src="vendor/bootstrap-4.4.1-dist/js/bootstrap.min.js"></script>
-        <script type="text/javascript" src="assets/js/script.js"></script>
+        <script type="text/javascript" src="assets/js/app.js"></script>
     </body>
 </html>
