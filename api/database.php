@@ -27,4 +27,8 @@ class Database {
     public function fetch_row( $query ) {
         return mysqli_fetch_row( $query );
     }
+
+    public function rows_count($query) {
+		return mysqli_num_rows( $query );
+	}
 }

@@ -16,24 +16,36 @@ class Router {
     }
 
     public function run() {
-        if ( isset( $_POST['products'] ) ) {
-            if ( isset( $_POST['category'] ) && !empty( $_POST['category'] ) ) {
-                $this->data = $this->products->get_products_by_category( $_POST['category'] );
-            } else {
-                $this->data = $this->products->get_products_list();
+        if ( isset( $_POST['products_list'] ) ) {
+            if ( isset( $_POST['category'] ) ) {
+                if ( isset( $_POST['page'] ) && !empty( $_POST['page'] ) ) {
+                    $this->data = $this->products->get_products_list( $_POST['category'], (int)$_POST['page'] );
+                }
+            } 
+            
+            else {
+                if ( isset( $_POST['page'] ) && !empty( $_POST['page'] ) ) {
+                    $this->data = $this->products->get_products_list( '' );
+                }
             }
-        } else if ( isset( $_POST['categories'] ) ) {
+        } 
+        
+        else if ( isset( $_POST['categories'] ) ) {
             $this->data = $this->products->get_categories_list();
-        } else if ( isset($_POST['cart_products'] ) ) {
+        } 
+        
+        else if ( isset($_POST['cart'] ) ) {
             if ( isset( $_POST['user_phone'] ) ) {
-                $this->data = $this->users->get_cart_products( $_POST['user_phone'] );
+                $this->data = $this->users->get_cart( $_POST['user_phone'] );
                 
                 if ( isset( $_POST['products_id'] ) ) {
-                    $this->users->update_cart_products( json_decode( $_POST['products_id'] ), 
+                    $this->users->update_cart( json_decode( $_POST['products_id'] ), 
                         $_POST['user_phone'] );
                 }
             }
-        } else if ( $_POST['login'] ) {
+        } 
+        
+        else if ( $_POST['login'] ) {
             if ( isset( $_POST['user_phone'] ) && isset( $_POST['user_password'] ) ) {
                 if ( $this->users->login( $_POST['user_phone'], $_POST['user_password'] ) ) {
                     $this->data = array( 'login' => true );
@@ -41,7 +53,9 @@ class Router {
                     $this->data = array( 'login' => false );
                 }
             }
-        }  else if ( $_POST['register'] ) {
+        }  
+        
+        else if ( $_POST['register'] ) {
             if ( isset( $_POST['name'] ) && isset( $_POST['phone'] ) && isset( $_POST['password'] ) )  {
                 if ( $this->users->register( $_POST['name'], $_POST['phone'], $_POST['password'] ) ) {
                     $this->data = array( 'register' => true );

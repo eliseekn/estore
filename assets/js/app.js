@@ -1,7 +1,7 @@
 let cartProducts = [];
 
-function updateCartProductsCount() {
-    $(".cart-products-count").each(function(i, el) {
+function updateCartCount() {
+    $(".cart-count").each(function(i, el) {
         $(el).text(cartProducts.length);
     });
 }
@@ -22,16 +22,21 @@ function getUserPhone() {
     return userPhone;
 }
 
-function getProductsList(productsCat) {
+function getProductsList(productsCat, page) {
     $.ajax({
         url: '././api/router.php',
         type: 'post',
         data: {
-            products: 'products',
-            category: productsCat
+            products_list: 'products_list',
+            category: productsCat,
+            page: page
         },
-        success: function(productsList) {
+        success: function(data) {
             let productsCard = '';
+            let productsList = data.products_list;
+            let page = data.page;
+            let total_pages = data.total_pages;
+            let first_item = data.first_item;
 
             productsList.forEach(product => {
                 productsCard += `
@@ -53,6 +58,42 @@ function getProductsList(productsCat) {
 
             $("#products-list").html(productsCard);
 
+            let paginationHTML = '';
+
+            if (page != first_item + 1) {
+                paginationHTML += `
+                    <a class="page-link text-dark" href="#" data-page-id="${page - 1}">Page précédente</a>
+                `;
+            }
+
+            for (let i = 1; i <= total_pages; i++) {
+                paginationHTML += `<a class="page-link text-dark" href="#" data-page-id="${i}">${i}</a>`;
+            }
+
+            if (page != total_pages) {
+                paginationHTML += `
+                    <a class="page-link text-dark" href="#" data-page-id="${page + 1}">Page suivante</a>
+                `;
+            }
+
+            $(".pagination").html(paginationHTML);
+
+            $(".page-link").each(function(i, el) {
+                $(el).click(function(e) {
+                    e.preventDefault();
+        
+                    let pageId = this.dataset.pageId;
+                    let catName = $("#products-list-title").text();
+        
+                    if (catName == "Tous les produits") {
+                        catName = "";
+                    }
+        
+                    getProductsList(catName, pageId);
+                    updateCart();
+                });
+            });
+
             if (productsCat === "") {
                 $("#products-list-title").text("Tous les produits");
             } else {
@@ -71,13 +112,13 @@ function getProductsList(productsCat) {
                     let inCart = cartProducts.find(item => item.id === productId);
                     if (!inCart) {
                         cartProducts.push({ productId, productName, productPrice, productCat });
-                        updateCartProductsCount();
+                        updateCartCount();
 
                         $(this).text('Déjà dans le panier!');
                         $(this).addClass('disabled');
                     }
                     
-                    _updateCartProducts();
+                    _updateCart();
                 });
             });
         }
@@ -111,20 +152,20 @@ function getCategoriesList() {
                     e.preventDefault();
 
                     let catName = this.dataset.catName;
-                    getProductsList(catName);
-                    updateCartProducts();
+                    getProductsList(catName, 1);
+                    updateCart();
                 });
             });
         }
     });
 }
 
-function getCartProducts() {
+function getCart() {
     $.ajax({
         url: '././api/router.php',
         type: 'post',
         data: {
-            cart_products: 'cart_products',
+            cart: 'cart',
             user_phone: getUserPhone()
         },
         success: function(_cartProducts) {
@@ -143,18 +184,18 @@ function getCartProducts() {
                 });
                 
                 cartProducts.push({ productId, productName, productPrice, productCat });
-                updateCartProductsCount();
+                updateCartCount();
             });
         }
     });
 }
 
-function updateCartProducts() {
+function updateCart() {
     $.ajax({
         url: '././api/router.php',
         type: 'post',
         data: {
-            cart_products: 'cart_products',
+            cart: 'cart',
             user_phone: getUserPhone()
         },
         success: function(_cartProducts) {
@@ -176,7 +217,7 @@ function updateCartProducts() {
     });
 }
 
-function _updateCartProducts() {
+function _updateCart() {
     let ProductsId = cartProducts.map(item => {
         return item.productId;
     });
@@ -187,7 +228,7 @@ function _updateCartProducts() {
         url: '././api/router.php',
         type: 'post',
         data: {
-            cart_products: 'cart_products',
+            cart: 'cart',
             user_phone: getUserPhone(),
             products_id: ProductsId
         }
@@ -195,9 +236,9 @@ function _updateCartProducts() {
 }
 
 $(function() {
-    getProductsList('');
+    getProductsList('', 1);
     getCategoriesList();
-    getCartProducts();
+    getCart();
 
     $("#cart-button").click(function(e) {
         e.preventDefault();
@@ -211,7 +252,7 @@ $(function() {
                     <div class="form-group row align-items-center">
                         <span>Quantité</span>
                         <div class="col">
-                            <input type="number" class="form-control cart-item-amount" value="1" min="1" data-product-price="${item.productPrice}" data-product-id="${item.productId}">
+                            <input type="number" class="form-control cart-amount" value="1" min="1" data-product-price="${item.productPrice}" data-product-id="${item.productId}">
                         </div>
                         <button type="button" class="btn btn-danger remove-from-cart" data-product-id="${item.productId}">Retirer</button>
                     </div>
@@ -243,13 +284,13 @@ $(function() {
                     }
                 });
 
-                _updateCartProducts();
-                updateCartProductsCount();
+                _updateCart();
+                updateCartCount();
                 updateCartPrice();
             });
         });
 
-        $(".cart-item-amount").each(function(i, el) {
+        $(".cart-amount").each(function(i, el) {
             $(el).change(function() {
                 let productId = this.dataset.productId;
                 let itemPrice = this.dataset.productPrice;
@@ -262,7 +303,7 @@ $(function() {
                     }
                 });
 
-                updateCartProductsCount();
+                updateCartCount();
                 updateCartPrice();
             });
         });
@@ -277,7 +318,7 @@ $(function() {
             $(el).click();
         });
 
-        _updateCartProducts();
+        _updateCart();
         updateCartPrice();
     });
 

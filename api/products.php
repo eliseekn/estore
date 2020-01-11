@@ -6,9 +6,40 @@ class Products {
         $this->db = new Database();
     }
 
-    public function get_products_list(): array {
+    private function get_products_count( string $category ): int {
+        if ( empty( $category ) ) {
+            $query = $this->db->query( "SELECT * FROM products" );
+        } else {
+            $query = $this->db->query( "SELECT * FROM products WHERE category='$category'" );
+        }
+
+        return $this->db->rows_count( $query );
+    }
+
+    private function paginate( string $category, int $page ): array {
+        $items_per_pages = 3;
+        $total_pages = ceil( $this->get_products_count( $category ) / $items_per_pages );
+
+        if ( $page < 1 ) {
+			$page = 1;
+		} elseif ( $page > $total_pages ) {
+			$page = $total_pages;
+		}
+
+        $first_item = ($page - 1) * $items_per_pages;
+
+        return array( $first_item, $items_per_pages, $total_pages );
+    }
+
+    public function get_products_list( string $category, int $page ): array {
         $products_list = [];
-        $query = $this->db->query( "SELECT * FROM products" );
+        $paginate = $this->paginate( $category, $page );
+        
+        if ( empty( $category ) ) {
+            $query = $this->db->query( "SELECT * FROM products ORDER BY id DESC LIMIT $paginate[0], $paginate[1]" );
+        } else {
+            $query = $this->db->query( "SELECT * FROM products WHERE category='$category' ORDER BY id DESC LIMIT $paginate[0], $paginate[1]" );
+        }
 
         while ( $row = $this->db->fetch_assoc( $query ) ) {
             $products_list[] = array(
@@ -20,12 +51,17 @@ class Products {
             );
         }
 
-        return $products_list;
+        return array(
+            'products_list' => $products_list,
+            'page' => $page,
+            'total_pages' => $paginate[2],
+            'first_item' => $paginate[0]
+        );
     }
 
     public function get_categories_list(): array {
         $categories_list = [];
-        $query = $this->db->query( "SELECT * FROM categories" );
+        $query = $this->db->query( "SELECT * FROM categories ORDER BY name ASC" );
 
         while ( $row = $this->db->fetch_assoc( $query ) ) {
             $categories_list[] = array(
@@ -49,22 +85,5 @@ class Products {
         $product['productCat'] = $row['category'];
 
         return $product;
-    }
-
-    public function get_products_by_category( string $category_name ): array {
-        $products_list = [];
-        $query = $this->db->query( "SELECT * FROM products WHERE category='$category_name'" );
-
-        while ( $row = $this->db->fetch_assoc( $query ) ) {
-            $products_list[] = array(
-                'productId' => $row['id'],
-                'productName' => $row['name'],
-                'productImage' => $row['image'],
-                'productPrice' => $row['price'],
-                'productCat' => $row['category']
-            );
-        }
-
-        return $products_list;
     }
 }

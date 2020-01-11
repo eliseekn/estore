@@ -26,7 +26,7 @@ class Users {
         }
     }
 
-    public function get_cart_products( string $phone ): array {
+    public function get_cart( string $phone ): array {
         $cart_products = [];
         $query = $this->db->query( "SELECT * FROM users WHERE phone='$phone'" );
         $row = $this->db->fetch_assoc( $query );
@@ -39,7 +39,7 @@ class Users {
         return $cart_products;
     }
 
-    public function update_cart_products( $cart_products, string $phone ) {
+    public function update_cart( $cart_products, string $phone ) {
         $products_id = implode( ',', $cart_products );
         $products_id = $this->db->escape_string( $products_id );
         $this->db->query( "UPDATE users SET products_id='$products_id' WHERE phone='$phone'" );

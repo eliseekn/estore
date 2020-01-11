@@ -34,7 +34,7 @@
                 width: 60px;
             }
 
-            .cart-item-price {
+            .cart-price {
                 font-weight: bold !important;
             }
         </style>
@@ -61,7 +61,7 @@
 
                     <a href="" class="nav-link" id="cart-button" data-toggle="modal" data-target="#exampleModalCenter">
                         <li class="fas fa-shopping-cart"></li>
-                        <span>Panier (<span class="cart-products-count"></span>)</span>
+                        <span>Panier (<span class="cart-count"></span>)</span>
                     </a>
                 </ul>
             </div>
@@ -90,20 +90,8 @@
 
                     <div class="card-columns" id="products-list"></div>
 
-                    <nav class="my-5">
-                        <ul class="pagination">
-                            <a class="page-link text-dark" href="#" aria-label="Previous">
-                                <li class="fas fa-angle-double-left"></li>
-                            </a>
-
-                            <a class="page-link text-dark" href="#">1</a></li>
-                            <a class="page-link text-dark" href="#">2</a></li>
-                            <a class="page-link text-dark" href="#">3</a></li>
-
-                            <a class="page-link text-dark" href="#" aria-label="Next">
-                                <li class="fas fa-angle-double-right"></li>
-                            </a>
-                        </ul>
+                    <nav class="my-4">
+                        <ul class="pagination"></ul>
                     </nav>
                 </div>
             </div>
@@ -113,7 +101,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header bg-dark text-white px-3">
-                        <h5 class="modal-title">Votre panier (<span class="cart-products-count"></span>)</h5>
+                        <h5 class="modal-title">Votre panier (<span class="cart-count"></span>)</h5>
                         <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                             <li class="fas fa-times"></li>
                         </button>
