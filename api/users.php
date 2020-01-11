@@ -8,21 +8,32 @@ class Users {
         $this->products = new Products();
     }
 
-    public function login( string $phone, string $password ): bool {
+    public function login( string $phone, string $password ): array {
         $query = $this->db->query( "SELECT * FROM users WHERE phone='$phone' AND password='$password'" );
-        $row = $this->db->fetch_row( $query );
-        return $row[0] >= 1 ? true : false;
+        $rows = $this->db->rows_count( $query );
+
+        if ( $rows == 1 ) {
+            return $this->db->fetch_assoc( $query );
+        } else {
+            return array();
+        }
     }
 
-    public function register( string $name, string $phone, string $password ) {
-        if ( $this->login( $phone, $password ) ) {
+    public function register( string $username, string $phone, string $password, string $email, string $street ): bool {
+        $infos = $this->login( $phone, $password );
+
+        if ( !empty( $infos ) ) {
             return false;
         } else {
-            $name = $this->db->escape_string( $name );
+            $username = $this->db->escape_string( $username );
             $phone = $this->db->escape_string( $phone );
             $password = $this->db->escape_string( $password );
+            $email = $this->db->escape_string( $email );
+            $street = $this->db->escape_string( $street );
 
-            return $this->db->query( "INSERT INTO users VALUES ('$name', '$phone', '$password')" );
+            $this->db->query( "INSERT INTO users(username, email, phone, street, password, products_id) 
+                VALUES ('$username', '$email', '$phone', '$street', '$password', '')" );
+            return true;
         }
     }
 

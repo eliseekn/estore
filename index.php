@@ -1,3 +1,11 @@
+<?php
+session_start();
+
+if ( !isset( $_SESSION['phone'] ) || !isset( $_SESSION['username'] ) ) {
+    header( 'Location: login.html');
+}
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
     <head>
@@ -37,6 +45,11 @@
             .cart-price {
                 font-weight: bold !important;
             }
+
+            .current-page {
+                background-color: #343a40;
+                color: white !important;
+            }
         </style>
     </head>
     <body>
@@ -48,11 +61,11 @@
                     <div class="dropdown">
                         <a href="" class="nav-link dropdown-toggle" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <li class="fas fa-user"></li>
-                            <span data-user-phone="00000000" id="user">test</span>
+                            <span data-user-phone="<?php echo $_SESSION['phone'] ?>" id="user"><?php echo $_SESSION['username'] ?></span>
                         </a>
 
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                            <a class="dropdown-item" href="#">
+                            <a class="dropdown-item" href="logout.php">
                                 <li class="fas fa-sign-out-alt"></li>
                                 <span>Déconnexion</span>
                             </a>
@@ -61,7 +74,7 @@
 
                     <a href="" class="nav-link" id="cart-button" data-toggle="modal" data-target="#exampleModalCenter">
                         <li class="fas fa-shopping-cart"></li>
-                        <span>Panier (<span class="cart-count"></span>)</span>
+                        <span>Panier (<span class="cart-count">0</span>)</span>
                     </a>
                 </ul>
             </div>
@@ -101,7 +114,7 @@
             <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                 <div class="modal-content">
                     <div class="modal-header bg-dark text-white px-3">
-                        <h5 class="modal-title">Votre panier (<span class="cart-count"></span>)</h5>
+                        <h5 class="modal-title">Votre panier (<span class="cart-count">0</span>)</h5>
                         <button type="button" class="close text-white" data-dismiss="modal" aria-label="Close">
                             <li class="fas fa-times"></li>
                         </button>

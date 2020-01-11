@@ -66,8 +66,14 @@ function getProductsList(productsCat, page) {
                 `;
             }
 
-            for (let i = 1; i <= total_pages; i++) {
-                paginationHTML += `<a class="page-link text-dark" href="#" data-page-id="${i}">${i}</a>`;
+            if (total_pages > 1) {
+                for (let i = 1; i <= total_pages; i++) {
+                    if (i === page) {
+                        paginationHTML += `<a class="page-link text-dark current-page" href="#" data-page-id="${i}">${i}</a>`;
+                    } else {
+                        paginationHTML += `<a class="page-link text-dark" href="#" data-page-id="${i}">${i}</a>`;
+                    }
+                }
             }
 
             if (page != total_pages) {
@@ -169,23 +175,25 @@ function getCart() {
             user_phone: getUserPhone()
         },
         success: function(_cartProducts) {
-            _cartProducts.forEach(item => {
-                let productId = item.productId;
-                let productName = item.productName;
-                let productPrice = item.productPrice;
-                let productCat = item.productCat;
-
-                $(".add-to-cart").each(function(i, el) {
-                    let _productId = el.dataset.productId;
-                    if (_productId === productId) {
-                        $(this).text('Déjà dans le panier!');
-                        $(this).addClass('disabled');
-                    }
+            if (_cartProducts.length > 1) {
+                _cartProducts.forEach(item => {
+                    let productId = item.productId;
+                    let productName = item.productName;
+                    let productPrice = item.productPrice;
+                    let productCat = item.productCat;
+    
+                    $(".add-to-cart").each(function(i, el) {
+                        let _productId = el.dataset.productId;
+                        if (_productId === productId) {
+                            $(this).text('Déjà dans le panier!');
+                            $(this).addClass('disabled');
+                        }
+                    });
+                    
+                    cartProducts.push({ productId, productName, productPrice, productCat });
+                    updateCartCount();
                 });
-                
-                cartProducts.push({ productId, productName, productPrice, productCat });
-                updateCartCount();
-            });
+            }
         }
     });
 }
@@ -201,9 +209,6 @@ function updateCart() {
         success: function(_cartProducts) {
             _cartProducts.forEach(item => {
                 let productId = item.productId;
-                let productName = item.productName;
-                let productPrice = item.productPrice;
-                let productCat = item.productCat;
 
                 $(".add-to-cart").each(function(i, el) {
                     let _productId = el.dataset.productId;

@@ -45,9 +45,15 @@ class Router {
             }
         } 
         
-        else if ( $_POST['login'] ) {
-            if ( isset( $_POST['user_phone'] ) && isset( $_POST['user_password'] ) ) {
-                if ( $this->users->login( $_POST['user_phone'], $_POST['user_password'] ) ) {
+        else if ( isset($_POST['login'] ) ) {
+            if ( isset( $_POST['phone'] ) && isset( $_POST['password'] ) ) {
+                $infos = $this->users->login( $_POST['phone'], $_POST['password'] );
+                
+                if ( !empty( $infos ) ) {
+                    session_start();
+                    $_SESSION['phone'] = $infos['phone'];
+                    $_SESSION['username'] = $infos['username'];
+
                     $this->data = array( 'login' => true );
                 } else {
                     $this->data = array( 'login' => false );
@@ -55,9 +61,17 @@ class Router {
             }
         }  
         
-        else if ( $_POST['register'] ) {
-            if ( isset( $_POST['name'] ) && isset( $_POST['phone'] ) && isset( $_POST['password'] ) )  {
-                if ( $this->users->register( $_POST['name'], $_POST['phone'], $_POST['password'] ) ) {
+        else if ( isset( $_POST['register'] ) ) {
+            if ( isset( $_POST['username'] ) && isset( $_POST['phone'] ) && isset( $_POST['password'] )
+                && isset( $_POST['email'] ) && isset( $_POST['street'] ) )  {
+                
+                if ( $this->users->register( $_POST['username'], $_POST['phone'], $_POST['password'],
+                    $_POST['email'], $_POST['street'] ) ) {
+                    
+                    session_start();
+                    $_SESSION['phone'] = $_POST['phone'];
+                    $_SESSION['username'] = $_POST['username'];
+
                     $this->data = array( 'register' => true );
                 } else {
                     $this->data = array( 'register' => false );
