@@ -1,4 +1,5 @@
 let cartProducts = [];
+let userConnected = false;
 
 function updateCartCount() {
     $(".cart-count").each(function(i, el) {
@@ -62,7 +63,7 @@ function getProductsList(productsCat, page) {
 
             if (page != first_item + 1) {
                 paginationHTML += `
-                    <a class="page-link text-dark" href="#" data-page-id="${page - 1}">Page précédente</a>
+                    <a class="page-link text-dark" href="#" data-page-id="${page - 1}">Précédent</a>
                 `;
             }
 
@@ -78,7 +79,7 @@ function getProductsList(productsCat, page) {
 
             if (page != total_pages) {
                 paginationHTML += `
-                    <a class="page-link text-dark" href="#" data-page-id="${page + 1}">Page suivante</a>
+                    <a class="page-link text-dark" href="#" data-page-id="${page + 1}">Suivant</a>
                 `;
             }
 
@@ -110,21 +111,25 @@ function getProductsList(productsCat, page) {
                 $(el).click(function(e) {
                     e.preventDefault();
 
-                    let productId = this.dataset.productId;
-                    let productName = this.dataset.productName;
-                    let productPrice = this.dataset.productPrice;
-                    let productCat = this.dataset.productCat;
+                    if (!userConnected) {
+                        window.location.href = "login.html";
+                    } else {
+                        let productId = this.dataset.productId;
+                        let productName = this.dataset.productName;
+                        let productPrice = this.dataset.productPrice;
+                        let productCat = this.dataset.productCat;
 
-                    let inCart = cartProducts.find(item => item.id === productId);
-                    if (!inCart) {
-                        cartProducts.push({ productId, productName, productPrice, productCat });
-                        updateCartCount();
+                        let inCart = cartProducts.find(item => item.id === productId);
+                        if (!inCart) {
+                            cartProducts.push({ productId, productName, productPrice, productCat });
+                            updateCartCount();
 
-                        $(this).text('Déjà dans le panier!');
-                        $(this).addClass('disabled');
+                            $(this).text('Déjà dans le panier!');
+                            $(this).addClass('disabled');
+                        }
+                        
+                        _updateCart();
                     }
-                    
-                    _updateCart();
                 });
             });
         }
@@ -175,25 +180,25 @@ function getCart() {
             user_phone: getUserPhone()
         },
         success: function(_cartProducts) {
-            if (_cartProducts.length > 1) {
-                _cartProducts.forEach(item => {
-                    let productId = item.productId;
+            _cartProducts.forEach(item => {
+                let productId = item.productId;
+
+                $(".add-to-cart").each(function(i, el) {
+                    if (el.dataset.productId === productId) {
+                        $(this).text('Déjà dans le panier!');
+                        $(this).addClass('disabled');
+                    }
+                });
+                
+                if (productId != null) {
                     let productName = item.productName;
                     let productPrice = item.productPrice;
                     let productCat = item.productCat;
-    
-                    $(".add-to-cart").each(function(i, el) {
-                        let _productId = el.dataset.productId;
-                        if (_productId === productId) {
-                            $(this).text('Déjà dans le panier!');
-                            $(this).addClass('disabled');
-                        }
-                    });
                     
                     cartProducts.push({ productId, productName, productPrice, productCat });
                     updateCartCount();
-                });
-            }
+                }
+            });
         }
     });
 }
@@ -211,8 +216,7 @@ function updateCart() {
                 let productId = item.productId;
 
                 $(".add-to-cart").each(function(i, el) {
-                    let _productId = el.dataset.productId;
-                    if (_productId === productId) {
+                    if (el.dataset.productId === productId) {
                         $(this).text('Déjà dans le panier!');
                         $(this).addClass('disabled');
                     }
@@ -240,80 +244,93 @@ function _updateCart() {
     });
 }
 
+function checkUserSession() {
+    $.ajax({
+        url: '././api/router.php',
+        type: 'post',
+        data: { check_session: 'check_session' },
+        success: function(data) {
+            userConnected = data.session;
+            getCart();
+        }
+    });
+}
+
 $(function() {
     getProductsList('', 1);
     getCategoriesList();
-    getCart();
+    checkUserSession();
 
     $("#cart-button").click(function(e) {
         e.preventDefault();
 
-        let itemsCard = '';
+        if (!userConnected) {
+            window.location.href = "login.html";
+        } else {
+            let itemsCard = '';
 
-        cartProducts.forEach(item => {
-            itemsCard += `
-                <li class="list-group-item d-flex justify-content-between align-items-center">
-                    <p>${item.productName} (<span class="cart-price" data-product-id="${item.productId}">${item.productPrice}</span> FCFA)</p>
-                    <div class="form-group row align-items-center">
-                        <span>Quantité</span>
-                        <div class="col">
-                            <input type="number" class="form-control cart-amount" value="1" min="1" data-product-price="${item.productPrice}" data-product-id="${item.productId}">
+            cartProducts.forEach(item => {
+                itemsCard += `
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <p>${item.productName} (<span class="cart-price" data-product-id="${item.productId}">${item.productPrice}</span> FCFA)</p>
+                        <div class="form-group row align-items-center">
+                            <span>Quantité</span>
+                            <div class="col">
+                                <input type="number" class="form-control cart-amount" value="1" min="1" data-product-price="${item.productPrice}" data-product-id="${item.productId}">
+                            </div>
+                            <button type="button" class="btn btn-danger remove-from-cart" data-product-id="${item.productId}">Retirer</button>
                         </div>
-                        <button type="button" class="btn btn-danger remove-from-cart" data-product-id="${item.productId}">Retirer</button>
-                    </div>
-                </li>
-            `;
-        });
-
-        $("#cart-products-list").html(itemsCard);
-
-        $(".remove-from-cart").each(function(i, el) {
-            $(el).click(function(e) {
-                e.preventDefault();
-
-                let cartItem = $(this).parent().parent();
-                cartItem.remove();
-
-                let productId = this.dataset.productId;
-                let inCart = cartProducts.find(item => item.id === productId);
-                let j = cartProducts.findIndex(item => item.id === productId);
-
-                cartProducts.splice(j, 1);
-
-                $(".add-to-cart").each(function(i, el) {
-                    let _productId = el.dataset.productId;
-
-                    if (_productId === productId) {
-                        $(el).text('Ajouter au panier');
-                        $(el).removeClass('disabled');
-                    }
-                });
-
-                _updateCart();
-                updateCartCount();
-                updateCartPrice();
+                    </li>
+                `;
             });
-        });
 
-        $(".cart-amount").each(function(i, el) {
-            $(el).change(function() {
-                let productId = this.dataset.productId;
-                let itemPrice = this.dataset.productPrice;
-                let totalPrice = itemPrice * $(this).val();
+            $("#cart-products-list").html(itemsCard);
 
-                $(".cart-price").each(function(i, el) {
-                    let _productId = el.dataset.productId;
-                    if (_productId === productId) {
-                        $(el).text(totalPrice);
-                    }
+            $(".remove-from-cart").each(function(i, el) {
+                $(el).click(function(e) {
+                    e.preventDefault();
+
+                    let cartItem = $(this).parent().parent();
+                    cartItem.remove();
+
+                    let productId = this.dataset.productId;
+                    let inCart = cartProducts.find(item => item.id === productId);
+                    let j = cartProducts.findIndex(item => item.id === productId);
+
+                    cartProducts.splice(j, 1);
+
+                    $(".add-to-cart").each(function(i, el) {
+                        if (el.dataset.productId === productId) {
+                            $(el).text('Ajouter au panier');
+                            $(el).removeClass('disabled');
+                        }
+                    });
+
+                    _updateCart();
+                    updateCartCount();
+                    updateCartPrice();
                 });
-
-                updateCartCount();
-                updateCartPrice();
             });
-        });
 
-        updateCartPrice();
+            $(".cart-amount").each(function(i, el) {
+                $(el).change(function() {
+                    let productId = this.dataset.productId;
+                    let itemPrice = this.dataset.productPrice;
+                    let totalPrice = itemPrice * $(this).val();
+
+                    $(".cart-price").each(function(i, el) {
+                        if (el.dataset.productId === productId) {
+                            $(el).text(totalPrice);
+                        }
+                    });
+
+                    updateCartCount();
+                    updateCartPrice();
+                });
+            });
+
+            updateCartPrice();
+        }
     });
 
     $("#clear-cart").click(function(e) {

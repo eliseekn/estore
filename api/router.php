@@ -79,6 +79,16 @@ class Router {
             }
         }
 
+        else if ( isset( $_POST['check_session'] ) ) {
+            session_start();
+
+            if ( isset( $_SESSION['phone'] ) && isset( $_SESSION['username'] ) ) {
+                $this->data = array( 'session' => true );
+            } else {
+                $this->data = array( 'session' => false );
+            }
+        }
+
         echo json_encode( $this->data );
     }
 }

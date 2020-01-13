@@ -17,7 +17,7 @@ class Products {
     }
 
     private function paginate( string $category, int $page ): array {
-        $items_per_pages = 3;
+        $items_per_pages = 5;
         $total_pages = ceil( $this->get_products_count( $category ) / $items_per_pages );
 
         if ( $page < 1 ) {

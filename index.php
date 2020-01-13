@@ -1,11 +1,3 @@
-<?php
-session_start();
-
-if ( !isset( $_SESSION['phone'] ) || !isset( $_SESSION['username'] ) ) {
-    header( 'Location: login.html');
-}
-?>
-
 <!DOCTYPE html>
 <html lang="fr">
     <head>
@@ -16,10 +8,11 @@ if ( !isset( $_SESSION['phone'] ) || !isset( $_SESSION['username'] ) ) {
         <title>eStore</title>
 
         <meta name="author" content="eliseekn">
+        <meta name="description" content="Shopping cart template with jQuery,Bootstrap(frontend) et PHP/MySQL (backend)">
+        <meta name="keywords" content="ecommerce,shopping cart,shop">
 
         <link rel="stylesheet" href="vendor/bootstrap-4.4.1-dist/css/bootstrap.min.css">
         <link rel="stylesheet" href="vendor/fontawesome-5.11.2/css/all.min.css">
-        <link rel="stylesheet" href="assets/css/style.css">
 
         <style type="text/css">
             nav li {
@@ -58,6 +51,13 @@ if ( !isset( $_SESSION['phone'] ) || !isset( $_SESSION['username'] ) ) {
                 <a class="navbar-brand" href="#">eStore</a>
 
                 <ul class="navbar-nav ml-auto">
+
+                <?php
+                session_start();
+
+                if ( isset( $_SESSION['phone'] ) && isset( $_SESSION['username'] ) ) {
+                ?>
+
                     <div class="dropdown">
                         <a href="" class="nav-link dropdown-toggle" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <li class="fas fa-user"></li>
@@ -71,6 +71,13 @@ if ( !isset( $_SESSION['phone'] ) || !isset( $_SESSION['username'] ) ) {
                             </a>
                         </div>
                     </div>
+
+                <?php } else { ?>
+                    <a href="login.html" class="nav-link">
+                        <li class="fas fa-sign-in-alt"></li>
+                        <span>Connexion</span>
+                    </a>
+                <?php } ?>
 
                     <a href="" class="nav-link" id="cart-button" data-toggle="modal" data-target="#exampleModalCenter">
                         <li class="fas fa-shopping-cart"></li>

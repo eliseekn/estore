@@ -41,11 +41,16 @@ class Users {
         $cart_products = [];
         $query = $this->db->query( "SELECT * FROM users WHERE phone='$phone'" );
         $row = $this->db->fetch_assoc( $query );
-        $products_id = explode( ',', $row['products_id'] );
 
-        foreach ( $products_id as $product_id ) {
-            $cart_products[] = $this->products->get_product_by_id( $product_id );
-        }
+        if ( strlen( $row['products_id'] ) == 1 ) {
+            $cart_products[] = $this->products->get_product_by_id( $row['products_id'] );
+        } else {
+            $products_id = explode( ',', $row['products_id'] );
+
+            foreach ( $products_id as $product_id ) {
+                $cart_products[] = $this->products->get_product_by_id( $product_id );
+            }
+        } 
 
         return $cart_products;
     }
