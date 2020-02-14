@@ -90,7 +90,7 @@
         <section class="container my-5">
             <div class="row">
                 <div class="col-lg-3">
-                    <h4 class="mt-5 text-dark">Rechercher</h4>
+                    <h4 class="mt-5 text-dark">Filtrer les résultats</h4>
                     <hr class="bg-dark mb-4">
 
                     <div class="form-group">
